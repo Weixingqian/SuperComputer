@@ -273,6 +273,24 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
+- (NSString*)formatStringFromFloat:(float)value
+{
+    return [self discardZero:[NSString stringWithFormat:@"%f", value]];
+}
+- (NSString*)discardZero:(NSString*)number
+{
+    if ([number rangeOfString:@"."].location != NSNotFound) {
+        // 若存在小数点，则需要丢弃字符串末尾的‘0’
+        int i = [number length] - 1;
+        // 从字符串末尾开始，找到第一不为‘0’的字符的位置
+        for (; (i >= 0) &&([number characterAtIndex:i] == '0'); i--) {}
+        // 若第一个不为‘0’的字符是‘.’则需要丢弃
+        if ([number characterAtIndex:i] == '.') i--;
+        // 只取第i个字符以及它之前的部分
+		number = [number substringToIndex:(i+1)];
+    }
+    return number;
+}
 - (void)doClear:(NSString*)number
 {
     showNumberView.text=number;
@@ -314,7 +332,7 @@
     switch (excuteTarget) {
         case AddOperator:
             sumNumber = sumNumber + tmpNumber;
-            showNumberView.text=[NSString stringWithFormat:@"%f",sumNumber];
+            showNumberView.text=[self formatStringFromFloat:sumNumber];
             break;
             
         default:
@@ -332,7 +350,7 @@
         tmpNumber = showNumberView.text.floatValue;
     }
     sumNumber = sumNumber + tmpNumber;
-    showNumberView.text = [NSString stringWithFormat:@"%f", sumNumber];
+    showNumberView.text = showNumberView.text=[self formatStringFromFloat:sumNumber];
     excuteTarget = AddOperator;
     needClear = YES;
     inputCount = 0;
