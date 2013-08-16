@@ -22,6 +22,8 @@
 
 @interface BottonViewController ()
 
+@property (nonatomic, retain) UIButton *cButton;
+
 @end
 
 @implementation BottonViewController
@@ -96,13 +98,12 @@
     [mrButton setTitle:@"mr" forState:UIControlStateHighlighted];
     mrButton.showsTouchWhenHighlighted = YES;
     
-    UIButton *cButton;
-    cButton=make_buttonTwo;
-    cButton.frame=CGRectOffset(cButton.frame, 0, 10);
-    cButton.backgroundColor=[UIColor brownColor];                               // C键
-    [cButton setTitle:@"c" forState:UIControlStateNormal];
-    [cButton addTarget:self action:@selector(cFunction:) forControlEvents:UIControlEventTouchUpInside];
-    cButton.showsTouchWhenHighlighted = YES;
+    _cButton=make_buttonTwo;
+    _cButton.frame=CGRectOffset(_cButton.frame, 0, 10);
+    _cButton.backgroundColor=[UIColor brownColor];                               // C键
+    [_cButton setTitle:@"C" forState:UIControlStateNormal];
+    [_cButton addTarget:self action:@selector(cFunction:) forControlEvents:UIControlEventTouchUpInside];
+    _cButton.showsTouchWhenHighlighted = YES;
     
     UIButton *aAcButton;
     aAcButton=make_buttonTwo;
@@ -255,7 +256,7 @@
     [buttonBGView addSubview:mulButton];
     [buttonBGView addSubview:divisionButton];
     [buttonBGView addSubview:aAcButton];
-    [buttonBGView addSubview:cButton];
+    [buttonBGView addSubview:_cButton];
     [wholeScreen addSubview:buttonBGView];
     [wholeScreen addSubview:showUpLabel];
     [buttonBGView addSubview:mcButton];
@@ -291,6 +292,18 @@
     }
     return number;
 }
+- (void)doAfterPressNumber:(NSString*)number
+{
+    if (needClear == YES) {
+        [self doClear:number];
+    }
+    else {
+        [self doNormal:number];
+    }
+    // 重置清空按钮
+    needRestAll = NO;
+    [_cButton setTitle:@"C" forState:UIControlStateNormal];
+}
 - (void)doClear:(NSString*)number
 {
     showNumberView.text=number;
@@ -302,17 +315,14 @@
 {
     if ([showNumberView.text isEqualToString:@"0"]) {
         showNumberView.text = number;
-        inputCount = 1;
-        
+        inputCount = 1;        
     }
     else if (inputCount >= 9){ }
     else {
         NSString *numberEqual=showNumberView.text;
         showNumberView.text=[numberEqual stringByAppendingString:number];
-        inputCount ++;
-        
+        inputCount ++;        
     }
-    needRestAll = NO;
 }
 - (void)resetAllTraget
 {
@@ -360,10 +370,12 @@
 {
     if (needRestAll == NO) {
         [self doClear:@"0"];
+        [_cButton setTitle:@"AC" forState:UIControlStateNormal];
         needRestAll = YES;
     }
     else {
         [self resetAllTraget];
+        [_cButton setTitle:@"C" forState:UIControlStateNormal];
     }
 }
 -(void)pointInt:(id)sender
@@ -379,99 +391,51 @@
         showNumberView.text=[numberEqual stringByAppendingFormat:@"."];
         pointExist = YES;
     }
+    // 重置清空按钮
+    needRestAll = NO;
+    [_cButton setTitle:@"C" forState:UIControlStateNormal];
 }
 -(void)zeroNumber:(id)sender
 {
-    if (needClear == YES) {
-        [self doClear:@"0"];
-    }
-    else {
-        [self doNormal:@"0"];
-    }
+    [self doAfterPressNumber:@"0"];
 }
 
 -(void)oneNumber:(id)sender
 {
-    if (needClear == YES) {
-        [self doClear:@"1"];
-    }
-    else {
-        [self doNormal:@"1"];
-    }
-
+    [self doAfterPressNumber:@"1"];
 }
 
 -(void)twoNumber:(id)sender
 {
-    if (needClear == YES) {
-        [self doClear:@"2"];
-    }
-    else {
-        [self doNormal:@"2"];
-    }
+    [self doAfterPressNumber:@"2"];
 }
 -(void)threeNumber:(id)sender
 {
-    if (needClear == YES) {
-        [self doClear:@"3"];
-    }
-    else {
-        [self doNormal:@"3"];
-    }
+    [self doAfterPressNumber:@"3"];
 }
 -(void)fourNumber:(id)sender
 {
-    if (needClear == YES) {
-        [self doClear:@"4"];
-    }
-    else {
-        [self doNormal:@"4"];
-    }
+    [self doAfterPressNumber:@"4"];
 }
 -(void)fiveNumber:(id)sender
 {
-    if (needClear == YES) {
-        [self doClear:@"5"];
-    }
-    else {
-        [self doNormal:@"5"];
-    }
+    [self doAfterPressNumber:@"5"];
 }
 -(void)sixNumber:(id)sender
 {
-    if (needClear == YES) {
-        [self doClear:@"6"];
-    }
-    else {
-        [self doNormal:@"6"];
-    }
+    [self doAfterPressNumber:@"6"];
 }
 -(void)sevenNumber:(id)sender
 {
-    if (needClear == YES) {
-        [self doClear:@"7"];
-    }
-    else {
-        [self doNormal:@"7"];
-    }
+    [self doAfterPressNumber:@"7"];
 }
 -(void)eightNumber:(id)sender
 {
-    if (needClear == YES) {
-        [self doClear:@"8"];
-    }
-    else {
-        [self doNormal:@"8"];
-    }
+    [self doAfterPressNumber:@"8"];
 }
 -(void)nineNumber:(id)sender
 {
-    if (needClear == YES) {
-        [self doClear:@"9"];
-    }
-    else {
-        [self doNormal:@"9"];
-    }
+    [self doAfterPressNumber:@"9"];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
